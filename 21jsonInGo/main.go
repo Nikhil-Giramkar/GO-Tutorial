@@ -14,9 +14,18 @@ type course struct {
 	Tags     []string `json:"tags,omitempty"` //omitempty specifies that if any of these tags is null then don't encode it in json
 }
 
+type student struct {
+	Name     string   `json:"studName"`
+	RollNo   int      `json:"studRoll"`
+	Address  string   `json:"studAddress"`
+	Subjects []string `json:"subjects"`
+}
+
 func main() {
 	fmt.Println("Json In GoLang")
 	EncodeJson()
+
+	DecodeJson()
 }
 
 func EncodeJson() {
@@ -39,5 +48,44 @@ func EncodeJson() {
 	}
 
 	fmt.Printf("%s \n", finalJson)
+
+}
+
+func DecodeJson() {
+	receivedJson := []byte(`
+	{
+		"studName": "Nikhil G",
+		"studRoll": 17,
+		"studAddress": "TX, USA",
+		"subjects": ["Maths","Science","History"]
+	}`)
+
+	var myStudent student
+
+	isJsonValid := json.Valid(receivedJson)
+
+	if isJsonValid {
+		fmt.Println("We received a vaild json")
+
+		json.Unmarshal(receivedJson, &myStudent)
+
+		fmt.Printf("%#v \n", myStudent)
+	} else {
+		fmt.Println("JSON not Valid")
+	}
+
+	//In some cases, we do not want to fit Json in any struct format
+	//just extract key value pairs from json and perform further operations
+	//Then use map, to extract key,value
+
+	var myRandomJson map[string]interface{}
+	//The above syntax denotes that myRandomJson is a mpa with keys of type string, but values can be anything hence interface{}
+
+	json.Unmarshal(receivedJson, &myRandomJson)
+	fmt.Printf("%#v \n", myStudent)
+
+	for k, v := range myRandomJson {
+		fmt.Printf("%v --> %v , Type of val: %T \n", k, v, v)
+	}
 
 }
